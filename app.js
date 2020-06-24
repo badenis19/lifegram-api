@@ -11,6 +11,7 @@ const app = express();
 
 app.use(cors());
 
+/* MONGODB CONNECTION */
 mongoose.connect(
   process.env.URI,
   {
@@ -20,6 +21,7 @@ mongoose.connect(
   () => console.log("connected to mongodb 🥭")
 );
 
+/* SERVER CONNECTION */
 app.listen(port, () =>
   console.log(`listening to port`, process.env.PORT)
 );
