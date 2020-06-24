@@ -1,11 +1,11 @@
 const express = require('express');
-// const graphqlHTTP = require('express-graphql');
+const graphqlHTTP = require('express-graphql');
 const mongoose = require("mongoose");
 const cors = require("cors");
-// const schema = require('./schema/schema')
+const schema = require('./schema/schema')
 require("dotenv/config");
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 4001;
 
 const app = express();
 
@@ -20,6 +20,14 @@ mongoose.connect(
   },
   () => console.log("connected to mongodb 🥭")
 );
+
+/* GRAPHIQL */
+
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  graphiql: true
+}))
+
 
 /* SERVER CONNECTION */
 app.listen(port, () =>

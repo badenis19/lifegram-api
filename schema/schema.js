@@ -1,8 +1,8 @@
-import graphql from 'graphql';
+const graphql = require('graphql');
 
 /* MODELS */
-import User from '../models/user';
-import Post from '../models/post';
+const User = require('../models/user');
+const Post = require('../models/post');
 
 const {
   GraphQLObjectType,
@@ -21,7 +21,7 @@ const PostType = new GraphQLObjectType({
     id: { type: GraphQLID },
     description: { type: GraphQLString },
     img: { type: GraphQLString },
-    comments: { type: GraphQLList },
+    comments: { type: GraphQLList(GraphQLString) },
     likes: { type: GraphQLInt },
     timeStamp: { type: GraphQLString }, //https://stackoverflow.com/questions/51830791/graphql-js-timestamp-scalar-type
     user: {
@@ -43,8 +43,8 @@ const UserType = new GraphQLObjectType({
     password: { type: GraphQLString },
     age: { type: GraphQLInt },
     description: { type: GraphQLString },
-    followers: { type: GraphQLList },
-    following: { type: GraphQLList },
+    // followers: { type: GraphQLList },
+    // following: { type: GraphQLList },
     posts: {
       type: new GraphQLList(PostType),
       resolve(parent, args) {
@@ -86,10 +86,55 @@ const RootQuery = new GraphQLObjectType({
   }
 })
 
+// Mutation allow to Create, Edit and Delete data
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addUser: {
+      type: UserType,
+      args: {
+        username: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+        age: { type: new GraphQLNonNull(GraphQLInt) },
+        description: { type: new GraphQLNonNull(GraphQLString) },
+        // followers: { type: GraphQLList },
+        following: { type: GraphQLList(GraphQLString) }
+      },
+      resolve(parent, args) { // takes the argumenst sent with the query by user and make a new instance of author and store in DB
+        let user = new User({ // User is the required User Model
+          username: args.username,
+          password: args.password,
+          age: args.age,
+          description: args.description,
+          // followers: args.followers,
+          following: args.following
+        })
+        return user.save() 
+      }
+    }
+    // ,
+    // addBook: {
+    //     type: BookType,
+    //     args: {
+    //         name: {type: new GraphQLNonNull(GraphQLString)}, 
+    //         genre: {type: new GraphQLNonNull(GraphQLString)},
+    //         authorId: {type: new GraphQLNonNull(GraphQLID) }
+    //     },
+    //     resolve(parent,args){
+    //         let book = new Book({
+    //             name: args.name,
+    //             genre: args.genre,
+    //             authorId: args.authorId
+    //         })
+    //         return book.save()
+    //     }
+    // }
+  }
+})
+
 
 // Defining which query the user can use when making queries from the front-end
 module.exports = new GraphQLSchema({
-  query: RootQuery
-  // , // allows make queries using query 
-  // mutation: Mutation // allows to perform mutation using mutation 
+  query: RootQuery, // allows make queries using query 
+  mutation: Mutation // allows to perform mutation using mutation 
 })
