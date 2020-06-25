@@ -34,7 +34,6 @@ const PostType = new GraphQLObjectType({
   })
 })
 
-
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
@@ -60,7 +59,7 @@ const RootQuery = new GraphQLObjectType({
     user: {
       type: UserType,
       args: { id: { type: GraphQLID } },
-      resolve(parent, args) { // acts after receivin query. 'parent' used with relationships | 'args' is the args key just above so 'id'
+      resolve(parent, args) { // acts after receiving query. 'parent' used with relationships | 'args' is the args key just above so 'id'
         return User.findById(args.id)
       }
     },
@@ -74,7 +73,7 @@ const RootQuery = new GraphQLObjectType({
     posts: {
       type: new GraphQLList(PostType),
       resolve(parent, args) {
-        return Post.find({}) // when object is empty {} it will return all
+        return Post.find({})
       }
     },
     users: {
@@ -97,11 +96,11 @@ const Mutation = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) },
         age: { type: new GraphQLNonNull(GraphQLInt) },
         description: { type: new GraphQLNonNull(GraphQLString) },
-        followers: { type: GraphQLList(GraphQLString) },
-        following: { type: GraphQLList(GraphQLString) }
+        followers: { type: GraphQLList(GraphQLID) },
+        following: { type: GraphQLList(GraphQLID) }
       },
-      resolve(parent, args) { // takes the argumenst sent with the query by user and make a new instance of author and store in DB
-        let user = new User({ // User is the required User Model
+      resolve(parent, args) {
+        let user = new User({ 
           username: args.username,
           password: args.password,
           age: args.age,
@@ -118,12 +117,12 @@ const Mutation = new GraphQLObjectType({
             description: {type: new GraphQLNonNull(GraphQLString)}, 
             img: {type: new GraphQLNonNull(GraphQLString)},
             comments: { type: GraphQLList(GraphQLString) },
-            likes: {type: new GraphQLNonNull(GraphQLInt)},
-            timeStamp: {type: new GraphQLNonNull(GraphQLString)},
+            likes: {type: GraphQLInt},
+            timeStamp: {type: GraphQLString},
             userId: {type: new GraphQLNonNull(GraphQLID) }
         },
         resolve(parent,args){
-            let book = new Post({
+            let post = new Post({
               description: args.description, 
               img: args.img,
               comments: args.comments,
@@ -131,7 +130,7 @@ const Mutation = new GraphQLObjectType({
               timeStamp: args.timeStamp,
               userId: args.userId
             })
-            return book.save()
+            return post.save()
         }
     }
   }
@@ -140,6 +139,6 @@ const Mutation = new GraphQLObjectType({
 
 // Defining which query the user can use when making queries from the front-end
 module.exports = new GraphQLSchema({
-  query: RootQuery, // allows make queries using query 
-  mutation: Mutation // allows to perform mutation using mutation 
+  query: RootQuery,
+  mutation: Mutation 
 })
