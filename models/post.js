@@ -7,7 +7,7 @@ const postSchema = new Schema({
   comments: [],
   likes: Number,
   // timeStamp: { type: Date, default: Date.now },
-  timeStamp: { type: String },
+  timeStamp: String,
   userId: String
 });
 

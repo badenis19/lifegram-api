@@ -43,8 +43,8 @@ const UserType = new GraphQLObjectType({
     password: { type: GraphQLString },
     age: { type: GraphQLInt },
     description: { type: GraphQLString },
-    // followers: { type: GraphQLList },
-    // following: { type: GraphQLList },
+    followers: { type: GraphQLList(GraphQLString) },
+    following: { type: GraphQLList(GraphQLString) },
     posts: {
       type: new GraphQLList(PostType),
       resolve(parent, args) {
@@ -97,7 +97,7 @@ const Mutation = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) },
         age: { type: new GraphQLNonNull(GraphQLInt) },
         description: { type: new GraphQLNonNull(GraphQLString) },
-        // followers: { type: GraphQLList },
+        followers: { type: GraphQLList(GraphQLString) },
         following: { type: GraphQLList(GraphQLString) }
       },
       resolve(parent, args) { // takes the argumenst sent with the query by user and make a new instance of author and store in DB
@@ -106,29 +106,34 @@ const Mutation = new GraphQLObjectType({
           password: args.password,
           age: args.age,
           description: args.description,
-          // followers: args.followers,
+          followers: args.followers,
           following: args.following
         })
         return user.save() 
       }
+    },
+    addPost: {
+        type: PostType,
+        args: {
+            description: {type: new GraphQLNonNull(GraphQLString)}, 
+            img: {type: new GraphQLNonNull(GraphQLString)},
+            comments: { type: GraphQLList(GraphQLString) },
+            likes: {type: new GraphQLNonNull(GraphQLInt)},
+            timeStamp: {type: new GraphQLNonNull(GraphQLString)},
+            userId: {type: new GraphQLNonNull(GraphQLID) }
+        },
+        resolve(parent,args){
+            let book = new Post({
+              description: args.description, 
+              img: args.img,
+              comments: args.comments,
+              likes: args.likes,
+              timeStamp: args.timeStamp,
+              userId: args.userId
+            })
+            return book.save()
+        }
     }
-    // ,
-    // addBook: {
-    //     type: BookType,
-    //     args: {
-    //         name: {type: new GraphQLNonNull(GraphQLString)}, 
-    //         genre: {type: new GraphQLNonNull(GraphQLString)},
-    //         authorId: {type: new GraphQLNonNull(GraphQLID) }
-    //     },
-    //     resolve(parent,args){
-    //         let book = new Book({
-    //             name: args.name,
-    //             genre: args.genre,
-    //             authorId: args.authorId
-    //         })
-    //         return book.save()
-    //     }
-    // }
   }
 })
 
