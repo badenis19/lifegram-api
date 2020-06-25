@@ -40,6 +40,7 @@ const UserType = new GraphQLObjectType({
     id: { type: GraphQLID },
     username: { type: GraphQLString },
     password: { type: GraphQLString },
+    img: { type: GraphQLString },
     age: { type: GraphQLInt },
     description: { type: GraphQLString },
     followers: { type: GraphQLList(GraphQLString) },
@@ -94,6 +95,7 @@ const Mutation = new GraphQLObjectType({
       args: {
         username: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
+        img: {type: GraphQLString},
         age: { type: new GraphQLNonNull(GraphQLInt) },
         description: { type: new GraphQLNonNull(GraphQLString) },
         followers: { type: GraphQLList(GraphQLID) },
@@ -103,6 +105,7 @@ const Mutation = new GraphQLObjectType({
         let user = new User({ 
           username: args.username,
           password: args.password,
+          img: args.img,
           age: args.age,
           description: args.description,
           followers: args.followers,
@@ -115,7 +118,7 @@ const Mutation = new GraphQLObjectType({
         type: PostType,
         args: {
             description: {type: new GraphQLNonNull(GraphQLString)}, 
-            img: {type: new GraphQLNonNull(GraphQLString)},
+            img: {type: GraphQLString},
             comments: { type: GraphQLList(GraphQLString) },
             likes: {type: GraphQLInt},
             timeStamp: {type: GraphQLString},
