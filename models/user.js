@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+// const PostSchema = require('./post')
 
 const userSchema = new Schema({
   username: {type: String, maxlength: 20},
@@ -9,6 +10,10 @@ const userSchema = new Schema({
   description: {type: String, maxlength: 50},
   followers: {type: [], default: []},
   following: {type: [], default: []}
+  // posts: [{
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Post'
+  // }]
 });
 
 module.exports = mongoose.model("User", userSchema);
