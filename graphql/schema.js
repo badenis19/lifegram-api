@@ -1,4 +1,5 @@
 const { buildSchema } = require('graphql');
+
 const schema = buildSchema(`
 
   type Query {
@@ -8,6 +9,13 @@ const schema = buildSchema(`
     post(_id: ID!): Post!
   }
 
+  type Mutation {
+    users: [User]
+    user(_id: ID!): User!
+    posts: [Post!]!
+    post(_id: ID!): Post!
+  }
+  
   type User {
     _id: ID!
     username: String!
@@ -22,7 +30,7 @@ const schema = buildSchema(`
 
   type Post {
     _id: ID!
-    description: String!
+    description: String
     img: String
     comments: [String]
     likes: Int
