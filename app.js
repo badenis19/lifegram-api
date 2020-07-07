@@ -1,8 +1,10 @@
 const express = require('express');
-const graphqlHTTP = require('express-graphql');
+const { ApolloServer } = require('apollo-server-express');
 const mongoose = require("mongoose");
 const cors = require("cors");
-const schema = require('./schema/schema')
+const schema = require('./graphql/schema')
+const resolvers = require('./graphql/resolvers');
+// const connectToDb = require('./db/connect');
 require("dotenv/config");
 
 const port = process.env.PORT || 4001;
@@ -21,12 +23,16 @@ mongoose.connect(
   () => console.log("connected to mongodb 🥭")
 );
 
-/* GRAPHIQL */
+// connectToDb();
 
-app.use('/graphql', graphqlHTTP({
-  schema: schema,
-  graphiql: true
-}))
+/* APOLLO SERVER  */
+
+const server = new ApolloServer({
+  typeDefs: schema,
+  resolvers,
+});
+
+server.applyMiddleware({ app, path: '/graphql' });
 
 
 /* SERVER CONNECTION */
