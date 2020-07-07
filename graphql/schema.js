@@ -1,15 +1,8 @@
-const { buildSchema } = require('graphql');
+const { gql } = require('apollo-server-express');
 
-const schema = buildSchema(`
+const schema = gql(`
 
   type Query {
-    users: [User]
-    user(_id: ID!): User!
-    posts: [Post!]!
-    post(_id: ID!): Post!
-  }
-
-  type Mutation {
     users: [User]
     user(_id: ID!): User!
     posts: [Post!]!
@@ -25,7 +18,7 @@ const schema = buildSchema(`
     description: String
     followers: [ID]
     following: [ID]
-    posts: [Post!]
+    posts: [Post]
   }
 
   type Post {
@@ -38,4 +31,5 @@ const schema = buildSchema(`
     user: User
   }
 `);
+
 module.exports = schema;

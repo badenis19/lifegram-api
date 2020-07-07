@@ -10,10 +10,6 @@ const userSchema = new Schema({
   description: {type: String, maxlength: 50},
   followers: {type: [], default: []},
   following: {type: [], default: []}
-  // posts: [{
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'Post'
-  // }]
 });
 
 module.exports = mongoose.model("User", userSchema);
