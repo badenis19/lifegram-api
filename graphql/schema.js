@@ -8,7 +8,7 @@ const schema = gql(`
     posts: [Post!]!
     post(_id: ID!): Post!
   }
-  
+
   type User {
     _id: ID!
     username: String!
@@ -20,7 +20,7 @@ const schema = gql(`
     following: [ID]
     posts: [Post]
   }
-
+  
   type Post {
     _id: ID!
     description: String
@@ -30,6 +30,11 @@ const schema = gql(`
     timeStamp: String 
     user: User
   }
+
+  type Mutation {
+    createPost(description: String, img: String, userId: String): Post
+  }
+  
 `);
 
 module.exports = schema;
