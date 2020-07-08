@@ -34,7 +34,7 @@ const schema = gql(`
 
   type Mutation {
     createPost(description: String, img: String, userId: String): Post
-    createUser(username: String, email: String, password: String, img: String, age: Int, description: String, followers: [ID], followers: [ID]): User
+    createUser(username: String, email: String, password: String, img: String, age: Int, description: String, followers: [ID], following: [ID]): User
   }
 
 `);
