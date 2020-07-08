@@ -39,10 +39,23 @@ const resolvers = {
         img: args.img,
         userId: args.userId
       })
-      
-      console.log(">>", newPost)
       return newPost.save()
+    },
+    createUser: async (parent, args) => {
+      console.log("creating user...")
+      let newUser = new UserDb({
+        username: args.username,
+        email: args.email,
+        password: args.password,
+        img: args.img,
+        age: args.age,
+        description: args.description,
+        followers: args.followers,
+        following: args.following
+      })
+      return newUser.save()
     }
+    
   }
 };
 

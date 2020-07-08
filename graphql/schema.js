@@ -12,6 +12,7 @@ const schema = gql(`
   type User {
     _id: ID!
     username: String!
+    email: String!
     password: String!
     img: String
     age: Int
@@ -33,8 +34,9 @@ const schema = gql(`
 
   type Mutation {
     createPost(description: String, img: String, userId: String): Post
+    createUser(username: String, email: String, password: String, img: String, age: Int, description: String, followers: [ID], followers: [ID]): User
   }
-  
+
 `);
 
 module.exports = schema;
