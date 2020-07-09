@@ -55,7 +55,7 @@ const resolvers = {
       })
       return newUser.save()
     }
-    
+
   }
 };
 
