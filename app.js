@@ -14,10 +14,6 @@ const app = express();
 
 app.use(cors());
 
-let hash = bcrypt.hashSync("password1",4)
-
-console.log(typeof hash)
-
 /* MONGODB CONNECTION */
 mongoose.connect(
   process.env.URI,
