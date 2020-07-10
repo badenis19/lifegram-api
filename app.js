@@ -5,6 +5,7 @@ const cors = require("cors");
 const schema = require('./graphql/schema')
 const resolvers = require('./graphql/resolvers');
 // const connectToDb = require('./db/connect');
+const bcrypt = require('bcrypt');
 require("dotenv/config");
 
 const port = process.env.PORT || 4001;
@@ -12,6 +13,10 @@ const port = process.env.PORT || 4001;
 const app = express();
 
 app.use(cors());
+
+let hash = bcrypt.hashSync("password1",4)
+
+console.log(typeof hash)
 
 /* MONGODB CONNECTION */
 mongoose.connect(
