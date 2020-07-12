@@ -1,11 +1,12 @@
 const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, gql, AuthenticationError } = require('apollo-server-express');
 const mongoose = require("mongoose");
 const cors = require("cors");
 const schema = require('./graphql/schema')
 const resolvers = require('./graphql/resolvers');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
 
 require("dotenv/config");
 
@@ -20,8 +21,6 @@ app.use(cors());
 app.use(express.urlencoded({
   extended: true
 }))
-
-const SECRET_KEY = 'secret!';
 
 const users = [
   {
@@ -64,15 +63,14 @@ const todos = [
   }
 ]
 
-
-
 // post request to signin/ path
 app.post('/signIn', async (req, res) => {
   // using destructuring to extract email and password from the body
   const { email, password } = req.body
 
-  console.log(email === users[0].email)
-  console.log(password === users[0].password)
+  console.log(password)
+  console.log(users[0].password)
+
   // getting the right users details by checking the emails
   const theUser = users.find(user => user.email === email)
   
@@ -90,6 +88,7 @@ app.post('/signIn', async (req, res) => {
 
   //check if password provided matches the user one
   const match = await bcrypt.compare(password, theUser.password)
+  console.log("match?", match)
   if (!match) {
     //return error to user to let them know the password is incorrect
     res.status(401).send({
@@ -102,11 +101,11 @@ app.post('/signIn', async (req, res) => {
   // if password matches we generate the token using the jwt.sign()
   const token = jwt.sign(
     { email: theUser.email, id: theUser.id },
-    SECRET_KEY,
+    process.env.SECRET_KEY,
   )
 
   if (token){
-    console.log("token")
+    console.log("token:",token)
   } else {
     console.log("no token")
   }
@@ -130,13 +129,24 @@ mongoose.connect(
   () => console.log("connected to mongodb 🥭")
 );
 
-// connectToDb();
-
 /* APOLLO SERVER  */
+
+const context = ({ req }) => {
+  const token = req.headers.authorization || ''
+
+  try {
+    return { id, email } = jwt.verify(token.split(' ')[1], SECRET_KEY)
+  } catch (e) {
+    throw new AuthenticationError(
+      'Authentication token is invalid, please log in',
+    )
+  }
+}
 
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
+  context
 });
 
 server.applyMiddleware({ app, path: '/graphql' });

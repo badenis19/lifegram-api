@@ -1,5 +1,6 @@
 const PostDb = require('../models/post');
 const UserDb = require('../models/user');
+const User_ = require
 
 const resolvers = {
   Query: {
@@ -11,12 +12,17 @@ const resolvers = {
       return await PostDb.findById(args._id);
     },
 
-    users: async (parent, args) => {
+    users: async (parent, args, context) => {
+      // console.log(context);
       return await UserDb.find();
     },
 
     user: async (parent, args) => {
       return await UserDb.findById(args._id);
+    },
+    // To remove
+    todos: (root, args) => {
+      return todos.filter(todo => todo.user === id)
     }
   },
 

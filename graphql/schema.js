@@ -7,6 +7,7 @@ const schema = gql(`
     user(_id: ID!): User!
     posts: [Post!]!
     post(_id: ID!): Post!
+    todos: [Todo]
   }
 
   type User {
@@ -20,6 +21,19 @@ const schema = gql(`
     followers: [ID]
     following: [ID]
     posts: [Post]
+  }
+
+  type User_ {
+    id: ID!
+    email: String!
+    name: String!
+    password: String!
+  }
+
+  type Todo {
+    id: ID!
+    user: Int!
+    name: String!
   }
   
   type Post {
