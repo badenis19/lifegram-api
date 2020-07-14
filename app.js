@@ -67,10 +67,9 @@ const todos = [
 
 const context = ({ req }) => {
   const token = req.headers.authorization || '';
-
-  console.log("USEEEEED")
-
+  
   try {
+    // check if token and Secret key are correct, if so return in context else return error
     const { id, email } = jwt.verify(token, process.env.SECRET_KEY);
     return {
       id,
@@ -129,7 +128,8 @@ app.post('/signIn', async (req, res) => {
   // if password matches we generate the token using the jwt.sign()
   const token = jwt.sign(
     { email: theUser.email, id: theUser.id },
-    process.env.SECRET_KEY,
+    process.env.SECRET_KEY
+    // ,{ expiresIn: 60 * 60 } expire
   )
 
   if (token) {

@@ -1,29 +1,6 @@
 const PostDb = require('../models/post');
 const UserDb = require('../models/user');
 
-const users = [
-  {
-    id: 1,
-    email: 'b',
-    username: 'Bruno',
-    password: '$2b$10$ahs7h0hNH8ffAVg6PwgovO3AVzn1izNFHn.su9gcJnUWUzb2Rcb2W',
-    description: 'fitness addict',
-    age: 29,
-    followers: [],
-    following: []
-  },
-  {
-    id: 2,
-    email: 't@df.ld',
-    username: 'Thierry',
-    password: 'fsfsjh',
-    description: 'Hi',
-    age: 31,
-    followers: [],
-    following: []
-  }
-];
-
 const todos = [
   {
     id: 1,
@@ -62,7 +39,10 @@ const resolvers = {
     // To remove
     todos: async (root, args, context) => {
       return await todos.filter(todo => todo.user === context.id)
-    }
+    },
+    myProfile: async (parent, args, context) => {
+      return await UserDb.findById(context._id);
+    },
   },
 
   User: {

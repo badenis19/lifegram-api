@@ -8,6 +8,7 @@ const schema = gql(`
     posts: [Post!]!
     post(_id: ID!): Post!
     todos: [Todo]
+    myProfile: User!
   }
 
   type User {
