@@ -66,10 +66,16 @@ const todos = [
 /* APOLLO SERVER  */
 
 const context = ({ req }) => {
-  const token = req.headers.authorization || ''
+  const token = req.headers.authorization || '';
+
+  console.log("USEEEEED")
 
   try {
-    return { id, email } = jwt.verify(token.split(' ')[1], SECRET_KEY)
+    const { id, email } = jwt.verify(token, process.env.SECRET_KEY);
+    return {
+      id,
+      email
+    }
   } catch (e) {
     throw new AuthenticationError(
       'Authentication token is invalid, please log in',
@@ -79,8 +85,8 @@ const context = ({ req }) => {
 
 const server = new ApolloServer({
   typeDefs: schema,
-  resolvers
-  // ,context
+  resolvers,
+  context
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
@@ -95,9 +101,9 @@ app.post('/signIn', async (req, res) => {
 
   // getting the right users details by checking the emails
   const theUser = users.find(user => user.email === email)
-  
+
   console.log("user", theUser)
-  
+
   // if email does not match return error message 
   if (!theUser) {
     console.log("email not found")
@@ -126,8 +132,8 @@ app.post('/signIn', async (req, res) => {
     process.env.SECRET_KEY,
   )
 
-  if (token){
-    console.log("token:",token)
+  if (token) {
+    console.log("token:", token)
   } else {
     console.log("no token")
   }
