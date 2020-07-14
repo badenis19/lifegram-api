@@ -61,7 +61,29 @@ const todos = [
     user: 2,
     name: 'Remember the milk'
   }
-]
+];
+
+/* APOLLO SERVER  */
+
+const context = ({ req }) => {
+  const token = req.headers.authorization || ''
+
+  try {
+    return { id, email } = jwt.verify(token.split(' ')[1], SECRET_KEY)
+  } catch (e) {
+    throw new AuthenticationError(
+      'Authentication token is invalid, please log in',
+    )
+  }
+}
+
+const server = new ApolloServer({
+  typeDefs: schema,
+  resolvers
+  // ,context
+});
+
+server.applyMiddleware({ app, path: '/graphql' });
 
 // post request to signin/ path
 app.post('/signIn', async (req, res) => {
@@ -128,28 +150,6 @@ mongoose.connect(
   },
   () => console.log("connected to mongodb 🥭")
 );
-
-/* APOLLO SERVER  */
-
-const context = ({ req }) => {
-  const token = req.headers.authorization || ''
-
-  try {
-    return { id, email } = jwt.verify(token.split(' ')[1], SECRET_KEY)
-  } catch (e) {
-    throw new AuthenticationError(
-      'Authentication token is invalid, please log in',
-    )
-  }
-}
-
-const server = new ApolloServer({
-  typeDefs: schema,
-  resolvers,
-  context
-});
-
-server.applyMiddleware({ app, path: '/graphql' });
 
 /* SERVER CONNECTION */
 app.listen(port, () =>
