@@ -6,6 +6,7 @@ const schema = require('./graphql/schema')
 const resolvers = require('./graphql/resolvers');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const UserDb = require('./models/user');
 
 
 require("dotenv/config");
@@ -20,54 +21,15 @@ app.use(cors());
 
 app.use(express.urlencoded({
   extended: true
-}))
-
-const users = [
-  {
-    id: 1,
-    email: 'b',
-    username: 'Bruno',
-    password: '$2b$10$ahs7h0hNH8ffAVg6PwgovO3AVzn1izNFHn.su9gcJnUWUzb2Rcb2W',
-    description: 'fitness addict',
-    age: 29,
-    followers: [],
-    following: []
-  },
-  {
-    id: 2,
-    email: 't@df.ld',
-    username: 'Thierry',
-    password: 'fsfsjh',
-    description: 'Hi',
-    age: 31,
-    followers: [],
-    following: []
-  }
-];
-
-const todos = [
-  {
-    id: 1,
-    user: 1,
-    name: 'Do something'
-  },
-  {
-    id: 2,
-    user: 1,
-    name: 'Do something else'
-  },
-  {
-    id: 3,
-    user: 2,
-    name: 'Remember the milk'
-  }
-];
+}));
 
 /* APOLLO SERVER  */
 
 const context = ({ req }) => {
   const token = req.headers.authorization || '';
-  
+
+  console.log(token)
+
   try {
     // check if token and Secret key are correct, if so return in context else return error
     const { id, email } = jwt.verify(token, process.env.SECRET_KEY);
@@ -95,34 +57,43 @@ app.post('/signIn', async (req, res) => {
   // using destructuring to extract email and password from the body
   const { email, password } = req.body
 
-  console.log(password)
-  console.log(users[0].password)
+  console.log("email:", email)
+  console.log("password", password)
 
   // getting the right users details by checking the emails
-  const theUser = users.find(user => user.email === email)
+  // const theUser = await UserDb.find(user => user.email === email)
+  const theUser = await UserDb.find({ email: email })
 
   console.log("user", theUser)
-
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  
   // if email does not match return error message 
   if (!theUser) {
     console.log("email not found")
     res.status(404).send({
       success: false,
       message: `Could not find account: ${email}`,
-    })
-    return console.log("email found")
+    }) 
+  } else {
+    console.log(theUser[0].username)
   }
 
-  //check if password provided matches the user one
-  const match = await bcrypt.compare(password, theUser.password)
+  // check if password provided matches the user one
+  const match = await bcrypt.compare(password, theUser[0].password)
+
   console.log("match?", match)
   if (!match) {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     //return error to user to let them know the password is incorrect
+    console.log("wrong creds found")
     res.status(401).send({
       success: false,
       message: 'Incorrect credentials',
     })
-    return console.log("correct creds found")
+  } else {
+    console.log("correct creds found")
   }
 
   // if password matches we generate the token using the jwt.sign()
@@ -138,7 +109,7 @@ app.post('/signIn', async (req, res) => {
     console.log("no token")
   }
 
-  // If all goes well send the token to the client as part of the response
+  // // If all goes well send the token to the client as part of the response
   res.send({
     success: true,
     token: token,
