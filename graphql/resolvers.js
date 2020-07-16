@@ -41,7 +41,9 @@ const resolvers = {
       return await todos.filter(todo => todo.user === context.id)
     },
     myProfile: async (parent, args, context) => {
-      return await UserDb.findById(context._id);
+      // console.log("::::::::",context.id)
+      // console.log(await UserDb.findById(context.id))
+      return await UserDb.findById(context.id);
     },
   },
 
@@ -58,6 +60,7 @@ const resolvers = {
   },
 
   Mutation: {
+
     createPost: async (parent, args) => {
       let newPost = new PostDb({
         description: args.description,
@@ -66,8 +69,10 @@ const resolvers = {
       })
       return newPost.save()
     },
+
     createUser: async (parent, args) => {
       console.log("creating user...")
+      console.log(args)
       let newUser = new UserDb({
         username: args.username,
         email: args.email,

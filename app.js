@@ -8,7 +8,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserDb = require('./models/user');
 
-
 require("dotenv/config");
 
 const port = process.env.PORT || 4001;
@@ -17,7 +16,7 @@ const app = express();
 
 app.use(cors());
 
-////////////////////////////////////////
+///////////////////////////////
 
 app.use(express.urlencoded({
   extended: true
@@ -28,7 +27,9 @@ app.use(express.urlencoded({
 const context = ({ req }) => {
   const token = req.headers.authorization || '';
 
-  console.log(token)
+  // console.log("INFO::",req);
+
+  // console.log("context", jwt.verify(token, process.env.SECRET_KEY));
 
   try {
     // check if token and Secret key are correct, if so return in context else return error
@@ -42,7 +43,7 @@ const context = ({ req }) => {
       'Authentication token is invalid, please log in',
     )
   }
-}
+};
 
 const server = new ApolloServer({
   typeDefs: schema,
@@ -52,8 +53,25 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
+
+app.post('/sign', async(req, res) => {
+  console.log("creating user...");
+  console.log(req.body);
+  const { username, email, password, age } = req.body
+  let newUser = new UserDb({
+    username: username,
+    email: email,
+    password: password,
+    age: age
+  })
+  
+  console.log(newUser);
+  return newUser.save();
+});
+
 // post request to signin/ path
 app.post('/signIn', async (req, res) => {
+  
   // using destructuring to extract email and password from the body
   const { email, password } = req.body
 
@@ -61,21 +79,17 @@ app.post('/signIn', async (req, res) => {
   console.log("password", password)
 
   // getting the right users details by checking the emails
-  // const theUser = await UserDb.find(user => user.email === email)
   const theUser = await UserDb.find({ email: email })
 
   console.log("user", theUser)
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  
+
   // if email does not match return error message 
   if (!theUser) {
     console.log("email not found")
     res.status(404).send({
       success: false,
       message: `Could not find account: ${email}`,
-    }) 
+    })
   } else {
     console.log(theUser[0].username)
   }
@@ -85,7 +99,6 @@ app.post('/signIn', async (req, res) => {
 
   console.log("match?", match)
   if (!match) {
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     //return error to user to let them know the password is incorrect
     console.log("wrong creds found")
     res.status(401).send({
@@ -95,10 +108,12 @@ app.post('/signIn', async (req, res) => {
   } else {
     console.log("correct creds found")
   }
+  console.log(">>>", theUser[0].id)
+  console.log(theUser[0].email)
 
   // if password matches we generate the token using the jwt.sign()
   const token = jwt.sign(
-    { email: theUser.email, id: theUser.id },
+    { email: theUser[0].email, id: theUser[0]._id },
     process.env.SECRET_KEY
     // ,{ expiresIn: 60 * 60 } expire
   )
@@ -122,6 +137,7 @@ app.post('/signIn', async (req, res) => {
 mongoose.connect(
   process.env.URI,
   {
+    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
   },
