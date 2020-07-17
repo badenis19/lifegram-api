@@ -61,7 +61,7 @@ app.post('/sign', async(req, res) => {
   let newUser = new UserDb({
     username: username,
     email: email,
-    password: password,
+    password: bcrypt.hashSync(password, 4),
     age: age
   })
   
