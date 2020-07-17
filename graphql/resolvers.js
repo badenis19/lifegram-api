@@ -61,12 +61,13 @@ const resolvers = {
 
   Mutation: {
 
-    createPost: async (parent, args) => {
+    createPost: async (parent, args, context) => {
       let newPost = new PostDb({
         description: args.description,
         img: args.img,
-        userId: args.userId
+        userId: context.id
       })
+      console.log(newPost)
       return newPost.save()
     },
 
