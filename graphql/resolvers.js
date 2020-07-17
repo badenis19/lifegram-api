@@ -1,5 +1,6 @@
 const PostDb = require('../models/post');
 const UserDb = require('../models/user');
+const bcrypt = require('bcrypt');
 
 const todos = [
   {
@@ -55,7 +56,7 @@ const resolvers = {
 
   Post: {
     user: async (post, args) => {
-      return await UserDb.findById(post.userId)
+      return await UserDb.findById(post.userId);
     }
   },
 
@@ -77,14 +78,14 @@ const resolvers = {
       let newUser = new UserDb({
         username: args.username,
         email: args.email,
-        password: args.password,
+        password: bcrypt.hashSync(args.password, 4),
         img: args.img,
         age: args.age,
         description: args.description,
         followers: args.followers,
         following: args.following
       })
-      return newUser.save()
+      return newUser.save();
     }
 
   }
