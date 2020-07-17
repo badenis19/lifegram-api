@@ -16,8 +16,6 @@ const app = express();
 
 app.use(cors());
 
-///////////////////////////////
-
 app.use(express.urlencoded({
   extended: true
 }));
@@ -26,10 +24,6 @@ app.use(express.urlencoded({
 
 const context = ({ req }) => {
   const token = req.headers.authorization || '';
-
-  // console.log("INFO::",req);
-
-  // console.log("context", jwt.verify(token, process.env.SECRET_KEY));
 
   try {
     // check if token and Secret key are correct, if so return in context else return error
@@ -53,10 +47,7 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
-
 app.post('/sign', async(req, res) => {
-  console.log("creating user...");
-  console.log(req.body);
   const { username, email, password, age } = req.body
   let newUser = new UserDb({
     username: username,
@@ -65,7 +56,6 @@ app.post('/sign', async(req, res) => {
     age: age
   })
   
-  console.log(newUser);
   return newUser.save();
 });
 
@@ -75,13 +65,8 @@ app.post('/signIn', async (req, res) => {
   // using destructuring to extract email and password from the body
   const { email, password } = req.body
 
-  console.log("email:", email)
-  console.log("password", password)
-
   // getting the right users details by checking the emails
   const theUser = await UserDb.find({ email: email })
-
-  console.log("user", theUser)
 
   // if email does not match return error message 
   if (!theUser) {
@@ -97,7 +82,6 @@ app.post('/signIn', async (req, res) => {
   // check if password provided matches the user one
   const match = await bcrypt.compare(password, theUser[0].password)
 
-  console.log("match?", match)
   if (!match) {
     //return error to user to let them know the password is incorrect
     console.log("wrong creds found")
@@ -108,8 +92,6 @@ app.post('/signIn', async (req, res) => {
   } else {
     console.log("correct creds found")
   }
-  console.log(">>>", theUser[0].id)
-  console.log(theUser[0].email)
 
   // if password matches we generate the token using the jwt.sign()
   const token = jwt.sign(
@@ -118,11 +100,11 @@ app.post('/signIn', async (req, res) => {
     // ,{ expiresIn: 60 * 60 } expire
   )
 
-  if (token) {
-    console.log("token:", token)
-  } else {
-    console.log("no token")
-  }
+  // if (token) {
+  //   console.log("token:", token)
+  // } else {
+  //   console.log("no token")
+  // }
 
   // // If all goes well send the token to the client as part of the response
   res.send({
@@ -130,8 +112,6 @@ app.post('/signIn', async (req, res) => {
     token: token,
   })
 })
-
-////////////////////////////////////////
 
 /* MONGODB CONNECTION */
 mongoose.connect(

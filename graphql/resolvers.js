@@ -2,24 +2,6 @@ const PostDb = require('../models/post');
 const UserDb = require('../models/user');
 const bcrypt = require('bcrypt');
 
-const todos = [
-  {
-    id: 1,
-    user: 1,
-    name: 'Do something'
-  },
-  {
-    id: 2,
-    user: 1,
-    name: 'Do something else'
-  },
-  {
-    id: 3,
-    user: 2,
-    name: 'Remember the milk'
-  }
-];
-
 const resolvers = {
   Query: {
     posts: async (parent, args) => {
@@ -37,13 +19,7 @@ const resolvers = {
     user: async (parent, args) => {
       return await UserDb.findById(args._id);
     },
-    // To remove
-    todos: async (root, args, context) => {
-      return await todos.filter(todo => todo.user === context.id)
-    },
     myProfile: async (parent, args, context) => {
-      // console.log("::::::::",context.id)
-      // console.log(await UserDb.findById(context.id))
       return await UserDb.findById(context.id);
     },
   },
@@ -61,20 +37,16 @@ const resolvers = {
   },
 
   Mutation: {
-
     createPost: async (parent, args, context) => {
       let newPost = new PostDb({
         description: args.description,
         img: args.img,
         userId: context.id
       })
-      console.log(newPost)
       return newPost.save()
     },
 
     createUser: async (parent, args) => {
-      console.log("creating user...")
-      console.log(args)
       let newUser = new UserDb({
         username: args.username,
         email: args.email,
