@@ -58,7 +58,12 @@ const resolvers = {
         following: args.following
       })
       return newUser.save();
-    }
+    },
+
+      toggleLike: async (parent, args, context) => {
+      console.log(args)
+      // return await UserDb.findById(context.id);
+    },
 
   }
 };
