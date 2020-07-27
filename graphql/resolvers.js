@@ -37,13 +37,17 @@ const resolvers = {
   },
 
   Mutation: {
+
     createPost: async (parent, args, context) => {
       let newPost = new PostDb({
         description: args.description,
         img: args.img,
         userId: context.id
       })
-      return newPost.save()
+      return newPost.save((err,data) => {
+        if (err) return console.error(err);
+        console.log("Post created successfully!");
+      })
     },
 
     createUser: async (parent, args) => {
@@ -57,11 +61,15 @@ const resolvers = {
         followers: args.followers,
         following: args.following
       })
-      return newUser.save();
+      return newUser.save((err, data) => { // data containes th user object
+        if (err) return console.error(err);
+        console.log("User created successfully!");
+      });
     },
 
-      toggleLike: async (parent, args, context) => {
-      console.log(args)
+    // Update
+    updateLike: async (parent, args, context) => {
+      console.log("args")
       // return await UserDb.findById(context.id);
     },
 

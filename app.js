@@ -57,7 +57,10 @@ app.post('/sign', async(req, res) => {
     age: age
   })
 
-  return newUser.save();
+  return newUser.save((err, data) => {
+    if (err) return console.error(err);
+    console.log("User added successfully!", data);
+  });
 });
 
 // post request to signin/ path
