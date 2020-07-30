@@ -68,18 +68,16 @@ const resolvers = {
     },
 
     followUser: async (parent, { _id }, context) => {
-      // TO DO: add condition so that same user cannot be added twice + do Unfollow user resolver
-      // add id of account followed in user user following array
-      console.log("following",)
+      // condition so that same user cannot be added twice
 
-      // getting the "following" array from the user to then if already following
+
+
+      // getting the "following" array from the user to then check if already following
       let currentUser = await UserDb.findById(context.id);
-      // console.log(a.following)
-      console.log("to follow", _id)
 
-
+      // if user not in following array add else return error in console
       if (!currentUser.following.includes(_id)) {
-        console.log("true");
+        console.log("following");
         try {
           await UserDb.updateOne(
             {
@@ -105,7 +103,7 @@ const resolvers = {
         } catch (err) {
           console.log(err)
         }
-      } 
+      }
       else {
         console.log("User already exists");
       }
@@ -114,34 +112,39 @@ const resolvers = {
     },
 
     unfollowUser: async (parent, { _id }, context) => {
-      // add id of account followed in user user following array
-      // check if user already is in array
-      console.log("unfollowing")
-      try {
-        await UserDb.updateOne(
-          {
-            _id: context.id
-          },
-          {
-            $pull: {
-              following: _id
+      // check if user is following before to remove
+      let currentUser = await UserDb.findById(context.id);
+      if (currentUser.following.includes(_id)) {
+        console.log("unfollowing")
+        try {
+          await UserDb.updateOne(
+            {
+              _id: context.id
+            },
+            {
+              $pull: {
+                following: _id
+              }
             }
-          }
-        )
-        // remove id of follower from account followed
-        await UserDb.updateOne(
-          {
-            _id: _id
-          },
-          {
-            $pull: {
-              followers: context.id
+          )
+          // remove id of follower from account followed
+          await UserDb.updateOne(
+            {
+              _id: _id
+            },
+            {
+              $pull: {
+                followers: context.id
+              }
             }
-          }
-        )
-      } catch (err) {
-        console.log(err)
+          )
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
+        console.log("error: you do not follow that users.");
       }
+
     }
 
     // // Update
