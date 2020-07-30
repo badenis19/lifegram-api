@@ -70,6 +70,7 @@ const resolvers = {
     followUser: async (parent, { _id }, context) => {
       // TO DO: add condition so that same user cannot be added twice + do Unfollow user resolver
       // add id of account followed in user user following array
+      console.log("following")
       try {
         await UserDb.updateOne(
           {
@@ -88,6 +89,36 @@ const resolvers = {
           },
           {
             $push: {
+              followers: context.id
+            }
+          }
+        )
+      } catch (err) {
+        console.log(err)
+      }
+    },
+
+    unfollowUser: async (parent, { _id }, context) => {
+      // add id of account followed in user user following array
+      console.log("unfollowing")
+      try {
+        await UserDb.updateOne(
+          {
+            _id: context.id
+          },
+          {
+            $pull: {
+              following: _id
+            }
+          }
+        )
+        // remove id of follower from account followed
+        await UserDb.updateOne(
+          {
+            _id: _id
+          },
+          {
+            $pull: {
               followers: context.id
             }
           }
