@@ -69,9 +69,6 @@ const resolvers = {
 
     followUser: async (parent, { _id }, context) => {
       // condition so that same user cannot be added twice
-
-
-
       // getting the "following" array from the user to then check if already following
       let currentUser = await UserDb.findById(context.id);
 
@@ -107,8 +104,6 @@ const resolvers = {
       else {
         console.log("User already exists");
       }
-
-
     },
 
     unfollowUser: async (parent, { _id }, context) => {
@@ -145,13 +140,50 @@ const resolvers = {
         console.log("error: you do not follow that users.");
       }
 
-    }
+    },
 
-    // // Update
-    // updateLike: async (parent, args, context) => {
-    //   console.log("args")
-    //   // return await UserDb.findById(context.id);
-    // },
+    likePost: async (parent, { _id }, context) => {
+      console.log("in like")
+      // if doesn't like the picture yet, like. else you already liked that picture 
+      // let currentUser = await UserDb.findById(context.id);
+      let currentPost = await PostDb.findById(_id)
+      console.log(currentPost);
+
+      // if not liking yet 
+      if (!currentPost.likes.includes(context.id)) {
+        console.log("liking")
+        try {
+          await PostDb.updateOne(
+            {
+              _id: _id
+            },
+            {
+              $push: {
+                likes: context.id
+              }
+            }
+          )
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
+        console.log("unliking")
+        try {
+          await PostDb.updateOne(
+            {
+              _id: _id
+            },
+            {
+              $pull: {
+                likes: context.id
+              }
+            }
+          )
+        } catch (err) {
+          console.log(err)
+        }
+      }
+    },
 
   }
 };

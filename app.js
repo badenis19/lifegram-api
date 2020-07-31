@@ -47,8 +47,7 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
-
-app.post('/sign', async(req, res) => {
+app.post('/sign', async (req, res) => {
   const { username, email, password, age } = req.body
   let newUser = new UserDb({
     username: username,
@@ -65,7 +64,7 @@ app.post('/sign', async(req, res) => {
 
 // post request to signin/ path
 app.post('/signIn', async (req, res) => {
-  
+
   // using destructuring to extract email and password from the body
   const { email, password } = req.body
 
@@ -91,19 +90,14 @@ app.post('/signIn', async (req, res) => {
       success: false,
       message: 'Incorrect credentials',
     })
-  } 
+  }
   // if password matches we generate the token using the jwt.sign()
   const token = jwt.sign(
     { email: theUser[0].email, id: theUser[0]._id },
-    process.env.SECRET_KEY,
-    { expiresIn: "1 hour" } 
+    process.env.SECRET_KEY
+    // ,
+    // { expiresIn: "1 hour" } 
   )
-
-  // if (token) {
-  //   console.log("token:", token)
-  // } else {
-  //   console.log("no token")
-  // }
 
   // If all goes well send the token to the client as part of the response
   res.send({
