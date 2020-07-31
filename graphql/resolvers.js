@@ -104,8 +104,6 @@ const resolvers = {
       else {
         console.log("User already exists");
       }
-
-
     },
 
     unfollowUser: async (parent, { _id }, context) => {
