@@ -47,9 +47,9 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
-
-app.post('/sign', async(req, res) => {
+app.post('/sign', async (req, res) => {
   const { username, email, password, age } = req.body
+  console.log("password", password)
   let newUser = new UserDb({
     username: username,
     email: email,
@@ -57,15 +57,22 @@ app.post('/sign', async(req, res) => {
     age: age
   })
 
-  return newUser.save((err, data) => {
-    if (err) return console.error(err);
-    console.log("User added successfully!", data);
-  });
+  if (!newUser) {
+    console.log("error1")
+    res.status(400).send({
+      success: false,
+      message: `error11`,
+    })
+  } else {
+    console.log("success1")
+    res.status(200).send({ message: "success" })
+  }
+  return newUser.save();
 });
 
 // post request to signin/ path
 app.post('/signIn', async (req, res) => {
-  
+
   // using destructuring to extract email and password from the body
   const { email, password } = req.body
 
@@ -79,6 +86,8 @@ app.post('/signIn', async (req, res) => {
       success: false,
       message: `Could not find account: ${email}`,
     })
+  } else {
+    console.log(theUser[0].username)
   }
 
   // check if password provided matches the user one
@@ -86,17 +95,20 @@ app.post('/signIn', async (req, res) => {
 
   if (!match) {
     //return error to user to let them know the password is incorrect
-    // console.log("wrong creds found")
+    console.log("wrong creds found")
     res.status(401).send({
       success: false,
       message: 'Incorrect credentials',
     })
-  } 
+  } else {
+    console.log("correct creds found")
+  }
+
   // if password matches we generate the token using the jwt.sign()
   const token = jwt.sign(
     { email: theUser[0].email, id: theUser[0]._id },
-    process.env.SECRET_KEY,
-    { expiresIn: "1 hour" } 
+    process.env.SECRET_KEY
+    // ,{ expiresIn: 60 * 60 } expire
   )
 
   // if (token) {
@@ -105,7 +117,7 @@ app.post('/signIn', async (req, res) => {
   //   console.log("no token")
   // }
 
-  // If all goes well send the token to the client as part of the response
+  // // If all goes well send the token to the client as part of the response
   res.send({
     success: true,
     token: token,
