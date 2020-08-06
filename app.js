@@ -57,17 +57,20 @@ app.post('/sign', async (req, res) => {
     age: age
   })
 
-  if (!newUser) {
-    console.log("error1")
-    res.status(400).send({
-      success: false,
-      message: `error11`,
-    })
-  } else {
-    console.log("success1")
-    res.status(200).send({ message: "success" })
+  if (newUser) {
+    return newUser.save((error, data) => {
+      if (error) {
+        return res.status(400).send({
+          success: false,
+          message: `User not created, credentials already in use.`,
+        })
+      }
+      res.status(200).send({
+        message: "User created succesfully"
+      })
+      return newUser.save();
+    });
   }
-  return newUser.save();
 });
 
 // post request to signin/ path
