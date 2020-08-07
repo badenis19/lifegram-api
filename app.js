@@ -111,16 +111,11 @@ app.post('/signIn', async (req, res) => {
   const token = jwt.sign(
     { email: theUser[0].email, id: theUser[0]._id },
     process.env.SECRET_KEY
-    // ,{ expiresIn: 60 * 60 } expire
+    // ,
+    // { expiresIn: "1 hour" } 
   )
 
-  // if (token) {
-  //   console.log("token:", token)
-  // } else {
-  //   console.log("no token")
-  // }
-
-  // // If all goes well send the token to the client as part of the response
+  // If all goes well send the token to the client as part of the response
   res.send({
     success: true,
     token: token,
