@@ -68,40 +68,122 @@ const resolvers = {
     },
 
     followUser: async (parent, { _id }, context) => {
-      // TO DO: add condition so that same user cannot be added twice + do Unfollow user resolver
-      // add id of account followed in user user following array
-      try {
-        await UserDb.updateOne(
-          {
-            _id: context.id
-          },
-          {
-            $push: {
-              following: _id
-            }
-          }
-        )
-        // add id of follower to account followed
-        await UserDb.updateOne(
-          {
-            _id: _id
-          },
-          {
-            $push: {
-              followers: context.id
-            }
-          }
-        )
-      } catch (err) {
-        console.log(err)
-      }
-    }
+      // condition so that same user cannot be added twice
+      // getting the "following" array from the user to then check if already following
+      let currentUser = await UserDb.findById(context.id);
 
-    // // Update
-    // updateLike: async (parent, args, context) => {
-    //   console.log("args")
-    //   // return await UserDb.findById(context.id);
-    // },
+      // if user not in following array add else return error in console
+      if (!currentUser.following.includes(_id)) {
+        console.log("following");
+        try {
+          await UserDb.updateOne(
+            {
+              _id: context.id
+            },
+            {
+              $push: {
+                following: _id
+              }
+            }
+          )
+          // add id of follower to account followed
+          await UserDb.updateOne(
+            {
+              _id: _id
+            },
+            {
+              $push: {
+                followers: context.id
+              }
+            }
+          )
+        } catch (err) {
+          console.log(err)
+        }
+      }
+      else {
+        console.log("User already exists");
+      }
+    },
+
+    unfollowUser: async (parent, { _id }, context) => {
+      // check if user is following before to remove
+      let currentUser = await UserDb.findById(context.id);
+      if (currentUser.following.includes(_id)) {
+        console.log("unfollowing")
+        try {
+          await UserDb.updateOne(
+            {
+              _id: context.id
+            },
+            {
+              $pull: {
+                following: _id
+              }
+            }
+          )
+          // remove id of follower from account followed
+          await UserDb.updateOne(
+            {
+              _id: _id
+            },
+            {
+              $pull: {
+                followers: context.id
+              }
+            }
+          )
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
+        console.log("error: you do not follow that users.");
+      }
+
+    },
+
+    likePost: async (parent, { _id }, context) => {
+      console.log("in like")
+      // if doesn't like the picture yet, like. else you already liked that picture 
+      // let currentUser = await UserDb.findById(context.id);
+      let currentPost = await PostDb.findById(_id)
+      console.log(currentPost);
+
+      // if not liking yet 
+      if (!currentPost.likes.includes(context.id)) {
+        console.log("liking")
+        try {
+          await PostDb.updateOne(
+            {
+              _id: _id
+            },
+            {
+              $push: {
+                likes: context.id
+              }
+            }
+          )
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
+        console.log("unliking")
+        try {
+          await PostDb.updateOne(
+            {
+              _id: _id
+            },
+            {
+              $pull: {
+                likes: context.id
+              }
+            }
+          )
+        } catch (err) {
+          console.log(err)
+        }
+      }
+    },
 
   }
 };
