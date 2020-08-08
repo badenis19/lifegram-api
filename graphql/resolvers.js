@@ -74,8 +74,8 @@ const resolvers = {
 
       // if user not in following array add else return error in console
       if (!currentUser.following.includes(_id)) {
-        console.log("following");
         try {
+          console.log("following");
           await UserDb.updateOne(
             {
               _id: context.id
@@ -102,16 +102,8 @@ const resolvers = {
         }
       }
       else {
-        console.log("User already exists");
-      }
-    },
-
-    unfollowUser: async (parent, { _id }, context) => {
-      // check if user is following before to remove
-      let currentUser = await UserDb.findById(context.id);
-      if (currentUser.following.includes(_id)) {
-        console.log("unfollowing")
         try {
+          console.log("unfollowing");
           await UserDb.updateOne(
             {
               _id: context.id
@@ -136,16 +128,11 @@ const resolvers = {
         } catch (err) {
           console.log(err)
         }
-      } else {
-        console.log("error: you do not follow that users.");
       }
-
     },
 
     likePost: async (parent, { _id }, context) => {
-      console.log("in like")
-      // if doesn't like the picture yet, like. else you already liked that picture 
-      // let currentUser = await UserDb.findById(context.id);
+      // if doesn't like the picture yet, like. else you already liked that picture
       let currentPost = await PostDb.findById(_id)
       console.log(currentPost);
 
@@ -184,7 +171,6 @@ const resolvers = {
         }
       }
     },
-
   }
 };
 
