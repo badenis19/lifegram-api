@@ -49,7 +49,6 @@ server.applyMiddleware({ app, path: '/graphql' });
 
 app.post('/sign', async (req, res) => {
   const { username, email, password, age } = req.body
-  console.log("password", password)
   let newUser = new UserDb({
     username: username,
     email: email,
@@ -57,40 +56,41 @@ app.post('/sign', async (req, res) => {
     age: age
   })
 
-  if (newUser) {
-    return newUser.save((error, data) => {
-      if (error) {
-        return res.status(400).send({
-          success: false,
-          message: `User not created, credentials already in use.`,
-        })
-      }
-      res.status(200).send({
-        message: "User created succesfully"
-      })
-      return newUser.save();
-    });
-  }
+  return newUser.save((err, data) => {
+    if (err) return console.error(err);
+    console.log("User added successfully!", data);
+  });
 });
 
 // post request to signin/ path
 app.post('/signIn', async (req, res) => {
 
+let a = []
+console.log("<>", a.length)
+
   // using destructuring to extract email and password from the body
   const { email, password } = req.body
+  console.log(email)
+  console.log(password)
 
   // getting the right users details by checking the emails
   const theUser = await UserDb.find({ email: email })
 
+  console.log(theUser)
+
+  // if(theUser.length <= 0 ){
+  //   console.log("empty")
+  // } else {
+  //   console.log(theUser)
+  // }
+
   // if email does not match return error message 
-  if (!theUser) {
+  if (theUser.length <= 0) {
     console.log("email not found")
-    res.status(404).send({
+    return res.status(404).send({
       success: false,
       message: `Could not find account: ${email}`,
     })
-  } else {
-    console.log(theUser[0].username)
   }
 
   // check if password provided matches the user one
@@ -98,15 +98,12 @@ app.post('/signIn', async (req, res) => {
 
   if (!match) {
     //return error to user to let them know the password is incorrect
-    console.log("wrong creds found")
+    // console.log("wrong creds found")
     res.status(401).send({
       success: false,
       message: 'Incorrect credentials',
     })
-  } else {
-    console.log("correct creds found")
   }
-
   // if password matches we generate the token using the jwt.sign()
   const token = jwt.sign(
     { email: theUser[0].email, id: theUser[0]._id },
