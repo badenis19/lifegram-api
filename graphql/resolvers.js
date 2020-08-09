@@ -1,7 +1,6 @@
 const PostDb = require('../models/post');
 const UserDb = require('../models/user');
 const bcrypt = require('bcrypt');
-const { findByIdAndDelete } = require('../models/post');
 
 const resolvers = {
   Query: {
