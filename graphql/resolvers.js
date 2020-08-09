@@ -39,6 +39,7 @@ const resolvers = {
   Mutation: {
 
     createPost: async (parent, args, context) => {
+      console.log(args)
       let newPost = new PostDb({
         description: args.description,
         img: args.img,
@@ -51,6 +52,7 @@ const resolvers = {
     },
 
     createUser: async (parent, args) => {
+      console.log(args)
       let newUser = new UserDb({
         username: args.username,
         email: args.email,
@@ -171,6 +173,13 @@ const resolvers = {
         }
       }
     },
+
+    deletePost: async (parent, { _id }) => {
+      return PostDb.findByIdAndDelete(_id, (err, data) => {
+        if (err) console.error(err)
+        console.log("post deleted")
+      } );
+    }
   }
 };
 
