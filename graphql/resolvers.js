@@ -69,7 +69,9 @@ const resolvers = {
       });
     },
 
-    followUser: async (parent, { _id }, context) => {
+    followUser: async (parent, { _id, username, img }, context) => {
+      console.log(">>", username)
+      console.log(">>", img)
       // condition so that same user cannot be added twice
       // getting the "following" array from the user to then check if already following
       let currentUser = await UserDb.findById(context.id);
