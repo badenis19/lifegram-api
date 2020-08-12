@@ -49,6 +49,7 @@ server.applyMiddleware({ app, path: '/graphql' });
 
 app.post('/sign', async (req, res) => {
   const { username, email, password, age } = req.body
+  console.log("password", password)
   let newUser = new UserDb({
     username: username,
     email: email,
@@ -56,10 +57,20 @@ app.post('/sign', async (req, res) => {
     age: age
   })
 
-  return newUser.save((err, data) => {
-    if (err) return console.error(err);
-    console.log("User added successfully!", data);
-  });
+  if (newUser) {
+    return newUser.save((error, data) => {
+      if (error) {
+        return res.status(400).send({
+          success: false,
+          message: `User not created, credentials already in use.`,
+        })
+      }
+      res.status(200).send({
+        message: "User created succesfully"
+      })
+      return newUser.save();
+    });
+  }
 });
 
 // post request to signin/ path
