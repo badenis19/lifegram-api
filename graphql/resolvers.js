@@ -176,12 +176,35 @@ const resolvers = {
       }
     },
 
+    editUserProfile: async (parent, args, context) => {
+      console.log("OOOOO", args)
+
+      // return UserDb.findByIdAndUpdate(
+      //   {
+      //     "_id": context.id
+      //   },
+      //   {
+      //     "$set": {
+      //       username: username,
+      //       email: email,
+      //       password: bcrypt.hashSync(password, 4),
+      //       img: img,
+      //       age: age,
+      //       description: description,
+      //     }
+      //   }
+      // )
+    },
+
+
+
     deletePost: async (parent, { _id }) => {
       return PostDb.findByIdAndDelete(_id, (err, data) => {
         if (err) console.error(err)
         console.log("post deleted")
-      } );
+      });
     }
+
   }
 };
 
