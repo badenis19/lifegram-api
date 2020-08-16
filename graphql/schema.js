@@ -38,7 +38,7 @@ const schema = gql(`
     createUser(username: String, email: String, password: String, img: String, age: Int, description: String, followers: [ID], following: [ID]): User
     followUser(_id: String, username: String, img: String): User
     likePost(_id: String): Post
-    editUserProfile(_id: String, username: String, email: String, password: String, img: String, age: Int, description: String): User
+    editUserProfile(username: String, email: String, password: String, img: String, age: Int, description: String): User
     deletePost(_id: String): Post
   }
 
