@@ -178,7 +178,7 @@ const resolvers = {
 
     editUserProfile: async (parent, { username, email, password, age, img, description }, context) => {
       console.log("OOOOO", context.id)
-      
+
 
       return UserDb.findByIdAndUpdate(
         {
@@ -188,14 +188,14 @@ const resolvers = {
           "$set": {
             username: username,
             email: email,
-            password: bcrypt.hashSync(password, 4),
+            // password: bcrypt.hashSync(password, 4),
             img: img,
             age: age,
             description: description,
           }
         },
         (err, data) => {
-          if(err) console.log(err);
+          if (err) console.log(err);
           console.log("User edited successfully")
         }
       )
