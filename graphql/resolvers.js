@@ -176,12 +176,38 @@ const resolvers = {
       }
     },
 
+    editUserProfile: async (parent, { username, email, password, age, img, description }, context) => {
+      console.log("OOOOO", context.id)
+      
+
+      return UserDb.findByIdAndUpdate(
+        {
+          "_id": context.id
+        },
+        {
+          "$set": {
+            username: username,
+            email: email,
+            password: bcrypt.hashSync(password, 4),
+            img: img,
+            age: age,
+            description: description,
+          }
+        },
+        (err, data) => {
+          if(err) console.log(err);
+          console.log("User edited successfully")
+        }
+      )
+    },
+
     deletePost: async (parent, { _id }) => {
       return PostDb.findByIdAndDelete(_id, (err, data) => {
         if (err) console.error(err)
         console.log("post deleted")
-      } );
+      });
     }
+
   }
 };
 
