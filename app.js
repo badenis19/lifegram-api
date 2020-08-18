@@ -78,6 +78,8 @@ app.post('/signIn', async (req, res) => {
 
   // using destructuring to extract email and password from the body
   const { email, password } = req.body
+  console.log(">>>", email);
+  console.log("<<<<", password);
 
   // getting the right users details by checking the emails
   const theUser = await UserDb.find({ email: email })
@@ -93,6 +95,7 @@ app.post('/signIn', async (req, res) => {
 
   // check if password provided matches the user one
   const match = await bcrypt.compare(password, theUser[0].password)
+  console.log("--", match)
 
   if (!match) {
     //return error to user to let them know the password is incorrect
