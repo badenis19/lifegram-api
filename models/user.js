@@ -10,7 +10,9 @@ const userSchema = new Schema({
   age: { type: Number, min: 16, max: 90, required: true },
   description: { type: String, maxlength: 50, default: "Enter Description" },
   followers: { type: [], default: [] },
-  following: { type: [], default: [] }
+  following: { type: [], default: [] },
+  weight: { type: String, default: "unknown"},
+  height: { type: String, default: "unknown"}
 });
 
 module.exports = mongoose.model("User", userSchema);

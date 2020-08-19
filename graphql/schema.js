@@ -21,6 +21,8 @@ const schema = gql(`
     followers: [ID]
     following: [ID]
     posts: [Post]
+    weight: String
+    height: String
   }
   
   type Post {
@@ -38,7 +40,7 @@ const schema = gql(`
     createUser(username: String, email: String, password: String, img: String, age: Int, description: String, followers: [ID], following: [ID]): User
     followUser(_id: String, username: String, img: String): User
     likePost(_id: String): Post
-    editUserProfile(username: String, email: String, password: String, img: String, age: Int, description: String): User
+    editUserProfile(username: String, email: String, password: String, img: String, age: Int, description: String, weight: String, height: String): User
     deletePost(_id: String): Post
   }
 

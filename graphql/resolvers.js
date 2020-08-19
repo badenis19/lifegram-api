@@ -61,7 +61,9 @@ const resolvers = {
         age: args.age,
         description: args.description,
         followers: args.followers,
-        following: args.following
+        following: args.following,
+        weight: args.weight,
+        height: args.height
       })
       return newUser.save((err, data) => { // data containes th user object
         if (err) return console.error(err);
@@ -176,9 +178,7 @@ const resolvers = {
       }
     },
 
-    editUserProfile: async (parent, { username, email, password, age, img, description }, context) => {
-      console.log("OOOOO", context.id)
-
+    editUserProfile: async (parent, { username, email, password, age, img, description, weight, height }, context) => {
 
       return UserDb.findByIdAndUpdate(
         {
@@ -192,6 +192,8 @@ const resolvers = {
             img: img,
             age: age,
             description: description,
+            weight: weight,
+            height: height
           }
         },
         (err, data) => {
